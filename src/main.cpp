@@ -280,6 +280,13 @@ __attribute__((weak, noinline)) bool loopCanSleep()
     return true;
 }
 
+#ifdef GAT562_MESH_WATCH
+// Forward declarations for boot watchdog functions
+void initBootWatchdog();
+void markBootCompleted();
+void bootTimeoutTask(void *parameter);
+#endif
+
 // Weak empty variant initialization function.
 // May be redefined by variant files.
 void lateInitVariant() __attribute__((weak));

@@ -36,8 +36,8 @@ void initVariant()
     pinMode(PIN_LED1, OUTPUT);
     ledOff(PIN_LED1);
 
-    pinMode(PIN_LED2, OUTPUT);
-    ledOff(PIN_LED2);
+//    pinMode(PIN_LED2, OUTPUT);
+//    ledOff(PIN_LED2);
 
     // 3V3 Power Rail
     pinMode(PIN_3V3_EN, OUTPUT);

@@ -51,7 +51,7 @@ extern "C" {
 
 // LEDs
 #define PIN_LED1 (35)
-#define PIN_LED2 (36)
+#define PIN_LED2 -1
 
 #define LED_BUILTIN PIN_LED1
 #define LED_CONN PIN_LED2
@@ -161,6 +161,7 @@ static const uint8_t SCK = PIN_SPI_SCK;
 #define PIN_WIRE_SCL (14)
 
 // QSPI Pins
+/*
 #define PIN_QSPI_SCK 3
 #define PIN_QSPI_CS 26
 #define PIN_QSPI_IO0 30
@@ -171,6 +172,7 @@ static const uint8_t SCK = PIN_SPI_SCK;
 // On-board QSPI Flash
 #define EXTERNAL_FLASH_DEVICES W25Q16JV_IQ
 #define EXTERNAL_FLASH_USE_QSPI
+*/
 
 /* @note RAK5005-O GPIO mapping to RAK4631 GPIO ports
    RAK5005-O <->  nRF52840

@@ -1,6 +1,4 @@
 #ifndef USERPREFS_HAS_SPLASH
-#define icon_width 50
-#define icon_height 20
 #define icon_width  50
 #define icon_height 20
 static unsigned char icon_bits[] = {

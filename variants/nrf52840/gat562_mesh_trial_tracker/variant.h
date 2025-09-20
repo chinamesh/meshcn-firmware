@@ -73,6 +73,7 @@ extern "C" {
 #else
 #define PIN_BUTTON1 9
 #define BUTTON_NEED_PULLUP
+#define PIN_BUTTON2 10
 #endif
 
 /*

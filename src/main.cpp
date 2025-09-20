@@ -295,6 +295,10 @@ void printInfo()
 #ifndef PIO_UNIT_TESTING
 void setup()
 {
+#ifdef GAT562_MESH_WATCH
+    // Initialize boot watchdog immediately at start of setup()
+    initBootWatchdog();
+#endif
 
 #if defined(PIN_POWER_EN)
     pinMode(PIN_POWER_EN, OUTPUT);
@@ -1499,6 +1503,11 @@ void setup()
 
     // We manually run this to update the NodeStatus
     nodeDB->notifyObservers(true);
+
+#ifdef GAT562_MESH_WATCH
+    // Mark boot as completed successfully
+    markBootCompleted();
+#endif
 }
 
 #endif
@@ -1508,6 +1517,59 @@ uint32_t shutdownAtMsec; // If not zero we will shutdown at this time (used to s
 // If a thread does something that might need for it to be rescheduled ASAP it can set this flag
 // This will suppress the current delay and instead try to run ASAP.
 bool runASAP;
+
+#ifdef GAT562_MESH_WATCH
+// Soft watchdog variables for boot timeout detection
+static uint32_t bootStartTime = 0;
+static volatile bool bootCompleted = false;
+static const uint32_t BOOT_TIMEOUT_MS = 60000; // 60 seconds boot timeout
+static TaskHandle_t bootWatchdogTaskHandle = NULL;
+
+// Initialize the soft watchdog for boot timeout
+void initBootWatchdog()
+{
+    bootStartTime = millis();
+    bootCompleted = false;
+    LOG_INFO("Boot watchdog initialized - timeout: %d ms", BOOT_TIMEOUT_MS);
+
+    // Create FreeRTOS task for boot timeout checking
+    BaseType_t result = xTaskCreate(bootTimeoutTask, "BootWatchdog", 2048, NULL, 1, &bootWatchdogTaskHandle);
+    if (result != pdPASS) {
+        LOG_ERROR("Failed to create boot watchdog task!");
+    }
+}
+
+// Check if boot timeout has exceeded and reset if needed
+void checkBootTimeout()
+{
+    if (!bootCompleted && bootStartTime > 0) {
+        uint32_t elapsed = millis() - bootStartTime;
+        if (elapsed > BOOT_TIMEOUT_MS) {
+            LOG_ERROR("Boot timeout exceeded (%d ms), performing system reset", elapsed);
+            // Force system reset
+            NVIC_SystemReset();
+        }
+    }
+}
+
+// FreeRTOS task for boot timeout checking
+void bootTimeoutTask(void *parameter)
+{
+    while (!bootCompleted) {
+        checkBootTimeout();
+        vTaskDelay(pdMS_TO_TICKS(1000)); // Check every 1 second
+    }
+    // Boot completed, exit task
+    vTaskDelete(NULL);
+}
+
+// Mark boot as completed successfully
+void markBootCompleted()
+{
+    bootCompleted = true;
+    LOG_INFO("Boot completed successfully in %d ms", millis() - bootStartTime);
+}
+#endif
 
 extern meshtastic_DeviceMetadata getDeviceMetadata()
 {
@@ -1593,6 +1655,10 @@ void loop()
 #endif
 #ifdef ARCH_NRF52
     nrf52Loop();
+#endif
+#ifdef GAT562_MESH_WATCH
+    // Check for boot timeout and reset if needed
+    checkBootTimeout();
 #endif
     power->powerCommandsCheck();
 

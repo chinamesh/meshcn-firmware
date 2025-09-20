@@ -73,7 +73,7 @@ extern bool isVibrating;
 
 extern int TCPPort; // set by Portduino
 
-// Return a human readable string of the form "MESHCN_ab13"
+// Return a human readable string of the form "MESH_ab13"
 const char *getDeviceName();
 
 extern uint32_t timeLastPowered;

@@ -1066,7 +1066,7 @@ void NodeDB::installDefaultDeviceState()
 #ifdef USERPREFS_CONFIG_OWNER_LONG_NAME
     snprintf(owner.long_name, sizeof(owner.long_name), (const char *)USERPREFS_CONFIG_OWNER_LONG_NAME);
 #else
-    snprintf(owner.long_name, sizeof(owner.long_name), "MESHCN %04x", getNodeNum() & 0x0ffff);
+    snprintf(owner.long_name, sizeof(owner.long_name), "MESH %04x", getNodeNum() & 0x0ffff);
 #endif
 #ifdef USERPREFS_CONFIG_OWNER_SHORT_NAME
     snprintf(owner.short_name, sizeof(owner.short_name), (const char *)USERPREFS_CONFIG_OWNER_SHORT_NAME);

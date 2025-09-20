@@ -104,7 +104,7 @@ static void taskCreateCert(void *parameter)
         yield();
         cert = new SSLCert();
         yield();
-        int createCertResult = createSelfSignedCert(*cert, KEYSIZE_2048, "CN=meshcn.local,O=MESHCN,C=US",
+        int createCertResult = createSelfSignedCert(*cert, KEYSIZE_2048, "CN=meshcn.local,O=MESH,C=US",
                                                     "20190101000000", "20300101000000");
         yield();
 

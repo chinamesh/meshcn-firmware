@@ -86,10 +86,10 @@ static void onNetworkConnected()
         LOG_INFO("Start network services");
 
         // start mdns
-        if (!MDNS.begin("MESHCN")) {
+        if (!MDNS.begin("MESH")) {
             LOG_ERROR("Error setting up mDNS responder!");
         } else {
-            LOG_INFO("mDNS Host: MESHCN.local");
+            LOG_INFO("mDNS Host: MESH.local");
             MDNS.addService("meshtastic", "tcp", SERVER_API_DEFAULT_PORT);
 // ESPmDNS (ESP32) and SimpleMDNS (RP2040) have slightly different APIs for adding TXT records
 #ifdef ARCH_ESP32

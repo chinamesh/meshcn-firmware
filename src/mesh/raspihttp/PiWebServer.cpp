@@ -336,7 +336,7 @@ int generate_self_signed_x509(EVP_PKEY *pkey, X509 **x509)
     // SET Subject Name
     X509_NAME *name = X509_get_subject_name(*x509);
     X509_NAME_add_entry_by_txt(name, "C", MBSTRING_ASC, (unsigned char *)"DE", -1, -1, 0);
-    X509_NAME_add_entry_by_txt(name, "O", MBSTRING_ASC, (unsigned char *)"MESHCN", -1, -1, 0);
+    X509_NAME_add_entry_by_txt(name, "O", MBSTRING_ASC, (unsigned char *)"MESH", -1, -1, 0);
     X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC, (unsigned char *)"meshcn.local", -1, -1, 0);
     // Selfsigned,  Issuer = Subject
     X509_set_issuer_name(*x509, name);

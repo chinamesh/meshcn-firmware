@@ -259,6 +259,8 @@ typedef enum _meshtastic_HardwareModel {
     meshtastic_HardwareModel_T_DECK_PRO = 102,
     /* Lilygo TLora Pager */
     meshtastic_HardwareModel_T_LORA_PAGER = 103,
+    /* GAT562 Mesh Trial Tracker */
+    meshtastic_HardwareModel_GAT562_MESH_TRIAL_TRACKER = 104,
     /* M5Stack Reserved */
     meshtastic_HardwareModel_M5STACK_RESERVED = 104, /* 0x68 */
     /* RAKwireless WisMesh Tag */

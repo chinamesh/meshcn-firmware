@@ -21,6 +21,7 @@ class menuHandler
         reset_node_db_menu,
         buzzermodemenupicker,
         mui_picker,
+        reset_to_bl,
         tftcolormenupicker,
         brightness_picker,
         reboot_menu,
@@ -82,6 +83,7 @@ class menuHandler
     static void saveUIConfig();
     static void keyVerificationInitMenu();
     static void keyVerificationFinalPrompt();
+    static void resetToBL();
     static void BluetoothToggleMenu();
 };
 

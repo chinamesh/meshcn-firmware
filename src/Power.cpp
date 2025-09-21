@@ -717,6 +717,9 @@ void Power::reboot()
 #if defined(ARCH_ESP32)
     ESP.restart();
 #elif defined(ARCH_NRF52)
+    if (nrf52_GPREGRET != 0x00) {
+        NRF_POWER->GPREGRET = nrf52_GPREGRET; // some device will reboot after GPREGRET was set.
+    }
     NVIC_SystemReset();
 #elif defined(ARCH_RP2040)
     rp2040.reboot();

@@ -821,8 +821,8 @@ void menuHandler::switchToMUIMenu()
 
 void menuHandler::TFTColorPickerMenu(OLEDDisplay *display)
 {
-    static const char *optionsArray[] = {"Back", "Default", "MESH Green", "Yellow", "Red", "Orange", "Purple", "Teal",
-                                         "Pink", "White"};
+    static const char *optionsArray[] = {"Back",   "Default", "MESH Green", "Yellow", "Red",
+                                         "Orange", "Purple",  "Teal",       "Pink",   "White"};
     BannerOverlayOptions bannerOptions;
     bannerOptions.message = "Select Screen Color";
     bannerOptions.optionsArrayPtr = optionsArray;
@@ -1146,7 +1146,7 @@ void menuHandler::screenOptionsMenu()
 void menuHandler::powerMenu()
 {
 
-    enum optionsNumbers { Back, Reboot, Shutdown, MUI };
+    enum optionsNumbers { Back, Reboot, Shutdown, MUI, Bootloader };
     static const char *optionsArray[4] = {"Back"};
     static int optionsEnumArray[4] = {Back};
     int options = 1;
@@ -1160,6 +1160,11 @@ void menuHandler::powerMenu()
 #if HAS_TFT
     optionsArray[options] = "Switch to MUI";
     optionsEnumArray[options++] = MUI;
+#endif
+
+#ifdef ARCH_NRF52
+    optionsArray[options] = "Bootloader";
+    optionsEnumArray[options++] = Bootloader;
 #endif
 
     BannerOverlayOptions bannerOptions;
@@ -1181,6 +1186,11 @@ void menuHandler::powerMenu()
         } else if (selected == MUI) {
             menuHandler::menuQueue = menuHandler::mui_picker;
             screen->runNow();
+#ifdef ARCH_NRF52
+        } else if (selected == Bootloader) {
+            menuHandler::menuQueue = menuHandler::reset_to_bl;
+            screen->runNow();
+#endif
         } else {
             menuQueue = system_base_menu;
             screen->runNow();
@@ -1219,6 +1229,29 @@ void menuHandler::keyVerificationFinalPrompt()
         screen->showOverlayBanner(options);
     }
 }
+
+#ifdef ARCH_NRF52
+void menuHandler::resetToBL()
+{
+    static const char *optionsArray[] = {"Back", "Confirm"};
+    BannerOverlayOptions bannerOptions;
+    bannerOptions.message = "Enter Bootloader?";
+    bannerOptions.optionsArrayPtr = optionsArray;
+    bannerOptions.optionsCount = 2;
+    bannerOptions.bannerCallback = [](int selected) -> void {
+        if (selected == 1) {
+            IF_SCREEN(screen->showSimpleBanner("Bootloader mode\nPower cycle to exit.", 0));
+            nodeDB->saveToDisk();
+            nrf52_GPREGRET = 0x57; // this will let device go into USB DFU.
+            rebootAtMsec = millis() + DEFAULT_REBOOT_SECONDS * 1000;
+        } else {
+            menuQueue = power_menu;
+            screen->runNow();
+        }
+    };
+    screen->showOverlayBanner(bannerOptions);
+}
+#endif
 
 void menuHandler::handleMenuSwitch(OLEDDisplay *display)
 {
@@ -1268,6 +1301,11 @@ void menuHandler::handleMenuSwitch(OLEDDisplay *display)
     case mui_picker:
         switchToMUIMenu();
         break;
+#ifdef ARCH_NRF52
+    case reset_to_bl:
+        resetToBL();
+        break;
+#endif
     case tftcolormenupicker:
         TFTColorPickerMenu(display);
         break;

@@ -708,7 +708,18 @@ int32_t Screen::runOnce()
     }
 #endif
     if (!NotificationRenderer::isOverlayBannerShowing() && rebootAtMsec != 0) {
+#ifdef ARCH_NRF52
+        switch (nrf52_GPREGRET) {
+        case 0x00:
+            showSimpleBanner("Rebooting...", 0);
+            break;
+        case 0x57:
+            showSimpleBanner("Bootloader mode\nPower cycle to exit.", 0);
+            break;
+        };
+#else
         showSimpleBanner("Rebooting...", 0);
+#endif
     }
 
     // Process incoming commands.

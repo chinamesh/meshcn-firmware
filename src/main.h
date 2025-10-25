@@ -81,6 +81,10 @@ extern uint32_t timeLastPowered;
 extern uint32_t rebootAtMsec;
 extern uint32_t shutdownAtMsec;
 
+#ifdef ARCH_NRF52
+extern uint8_t nrf52_GPREGRET;
+#endif
+
 extern uint32_t serialSinceMsec;
 
 // If a thread does something that might need for it to be rescheduled ASAP it can set this flag

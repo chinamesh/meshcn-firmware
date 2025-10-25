@@ -245,8 +245,16 @@ void ExternalNotificationModule::setExternalState(uint8_t index, bool on)
 #ifdef UNPHONE
         unphone.vibe(on); // the unPhone's vibration motor is on a i2c GPIO expander
 #endif
-        if (moduleConfig.external_notification.output_vibra)
+        if (moduleConfig.external_notification.output_vibra) {
+            // Initialize vibration motor pin on first use to avoid power draw during boot
+            if (!vibraMotorInitialized) {
+                LOG_INFO("Initializing vibration motor on Pin %i", moduleConfig.external_notification.output_vibra);
+                pinMode(moduleConfig.external_notification.output_vibra, OUTPUT);
+                digitalWrite(moduleConfig.external_notification.output_vibra, false); // Ensure it starts OFF
+                vibraMotorInitialized = true;
+            }
             digitalWrite(moduleConfig.external_notification.output_vibra, on);
+        }
         break;
     case 2:
         // Only control buzzer pin digitally if not using PWM mode
@@ -387,10 +395,11 @@ ExternalNotificationModule::ExternalNotificationModule()
         }
         setExternalState(0, false);
         externalTurnedOn[0] = 0;
+        // Delay vibration motor initialization to avoid power draw during boot
+        // The vibration motor will be initialized on first use to prevent brownout issues
+        vibraMotorInitialized = false;
         if (moduleConfig.external_notification.output_vibra) {
-            LOG_INFO("Use Pin %i for vibra motor", moduleConfig.external_notification.output_vibra);
-            pinMode(moduleConfig.external_notification.output_vibra, OUTPUT);
-            setExternalState(1, false);
+            LOG_INFO("Vibra motor on Pin %i will be initialized on first use", moduleConfig.external_notification.output_vibra);
             externalTurnedOn[1] = 0;
         }
         if (moduleConfig.external_notification.output_buzzer && canBuzz()) {
